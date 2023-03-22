@@ -2,7 +2,6 @@ package com.example.AssetGPS.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -26,20 +25,5 @@ public class WebSocketMessageConfig implements WebSocketMessageBrokerConfigurer 
         registry.addEndpoint("/gps").setAllowedOriginPatterns("*").withSockJS().setWebSocketEnabled(true);
     }
 
-    // scheduled refresh
-    /*@Scheduled(fixedRate = 10001)
-    public void refreshCreditBalance() {
-        try{
-            logger.info(destinationWebsocket);
-            logger.info(destinationURL);
-            logger.info(destinationURL.substring(destinationURL.indexOf("/") + 2, destinationURL.indexOf('.')));
-
-            RefreshCreditBalance.refresh(destinationWebsocket, String.valueOf(usersDetailsRepository.getCreditBalance(destinationURL.substring(destinationURL.indexOf("/") + 2, destinationURL.indexOf('.'))).get(0)[0]));
-            logger.info("refreshCreditBalance: refreshed " + destinationWebsocket);
-        }catch (Exception e){
-            return;
-        }
-    }*/
-
-//            simpMessagingTemplate.convertAndSend("/ws/gps/gps-data", "{\"connected\": \"true\"}");
+//    simpMessagingTemplate.convertAndSend("/ws/gps/gps-data", "{\"connected\": \"true\"}");
 }

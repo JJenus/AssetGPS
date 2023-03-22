@@ -8,6 +8,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -15,20 +18,31 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class OnWebSocketConnected implements ApplicationListener<SessionSubscribeEvent> {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    private String data = "";
 
     @Override
     public void onApplicationEvent(SessionSubscribeEvent event) {
         SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 
         if (headers.containsNativeHeader("trackingData") && !headers.getNativeHeader("trackingData").isEmpty()){
-            System.out.println("\n\n>>> YES");
-            log.info("Shiot");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            simpMessagingTemplate.convertAndSend("/ws/gps/gps-data", "{\"connected\": \"true\"}");
+            Flux.interval(Duration.ofSeconds(3L)).subscribe(message -> {
+                String txt = new CustomFile().getTemplate("tracker.txt");
+                if (!txt.equalsIgnoreCase(data)) {
+                    data = txt;
+                    simpMessagingTemplate.convertAndSend("/ws/gps/gps-data", data);
+                }
+            });
+//            simpMessagingTemplate.convertAndSend("/ws/gps/gps-data", "{\"connected\": \"true\"}");
         }
     }
+
+    public void setData(String txt){
+        data = txt;
+    }
+
 }
